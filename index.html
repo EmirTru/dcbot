@@ -3,66 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Bot Kontrol Paneli</title>
+    <title>Discord Bot Paneli</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #23272a;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #2c2f33;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-        h2 { color: #5865F2; margin-bottom: 20px; }
-        input, button {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: none;
-            box-sizing: border-box;
-        }
-        input {
-            background-color: #202225;
-            color: white;
-            font-size: 14px;
-        }
-        input:focus { outline: 2px solid #5865F2; }
-        button {
-            background-color: #5865F2;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        body { font-family: sans-serif; background-color: #23272a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: #2c2f33; padding: 30px; border-radius: 12px; text-align: center; width: 100%; max-width: 400px; }
+        h2 { color: #5865F2; }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: none; box-sizing: border-box; }
+        input { background-color: #202225; color: white; }
+        button { background-color: #5865F2; color: white; font-weight: bold; cursor: pointer; }
         button:hover { background-color: #4752C4; }
-        #status { margin-top: 15px; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Discord Bot Paneli 💬</h2>
-    <p style="color: #b9bbbe; font-size: 14px;">VS Code'daki botunuza webden mesaj uçurun.</p>
-    
-    <input type="text" id="kanalID" placeholder="Hedef Kanal ID girin">
-    <input type="text" id="mesaj" placeholder="Gidecek mesajı yazın...">
-    
-    <button onclick="botaGonder()">Discord'a Gönder 🚀</button>
-    <div id="status"></div>
+    <h2>Discord Bot Paneli 🚀</h2>
+    <input type="text" id="kanalID" placeholder="Kanal ID girin">
+    <input type="text" id="mesaj" placeholder="Mesajınızı yazın...">
+    <button onclick="firebaseYaz()">Discord'a Gönder 💬</button>
+    <div id="status" style="margin-top: 15px; font-weight: bold;"></div>
 </div>
+
+<script>
+    async function firebaseYaz() {
+        const kanalID = document.getElementById('kanalID').value;
+        const mesaj = document.getElementById('mesaj').value;
+        const status = document.getElementById('status');
+
+        if(!kanalID || !mesaj) {
+            status.innerText = "Boş alan bırakma! ⚠️";
+            return;
+        }
+
+        status.innerText = "Gönderiliyor... ⏳";
+
+        // BURAYA KENDİ FIREBASE REALTIME DATABASE LINKINI YAPIŞTIR (Sonuna /mesajlar.json eklemeyi unutma)
+        const firebaseURL = "https://VERITABANI_URL_ADRESIN/mesajlar.json";
+
+        try {
+            await fetch(firebaseURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ kanalID, mesaj, tarih: Date.now() })
+            });
+            status.innerText = "Mesaj Firebase'e uçtu! Bot birazdan sunucuya atar. ✅";
+        } catch (err) {
+            status.innerText = "Firebase hatası! ❌";
+        }
+    }
+</script>
+
+</body>
+</html></div>
 
 <script>
     async function botaGonder() {
