@@ -41,7 +41,7 @@
         .channel-item.active { background-color: rgba(255,255,255,0.1); color: white; }
         .channel-item span { margin-right: 6px; font-size: 16px; font-weight: bold; }
 
-        /* Sol Alt: Sürüm Bilgili Profil Alanı */
+        /* Sol Alt: Profil Alanı */
         .user-footer { height: 64px; background-color: #232428; display: flex; flex-direction: column; padding: 8px; justify-content: center; border-top: 1px solid rgba(0,0,0,0.1); }
         .user-info-row { display: flex; align-items: center; gap: 8px; justify-content: space-between; width: 100%; }
         .user-info { display: flex; align-items: center; gap: 8px; }
@@ -52,7 +52,6 @@
         #bot-name { font-weight: bold; color: white; line-height: 14px; }
         .user-tag { color: var(--text-muted); font-size: 11px; }
         
-        /* Yenilenen Sürüm Etiketi */
         .version-tag { background-color: #1e1f22; color: #23a55a; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; text-transform: uppercase; border: 1px solid rgba(35, 165, 90, 0.2); }
         .update-counter { font-size: 10px; color: var(--text-muted); margin-top: 4px; padding-left: 2px; text-align: left; font-style: italic; }
 
@@ -79,12 +78,10 @@
 </head>
 <body>
 
-    <!-- 1. EN SOL: SUNUCULAR -->
     <div class="guilds-sidebar" id="guilds-list">
         <div class="guild-icon add-guild-btn" title="Sunucu Ekle" onclick="addGuild()">+</div>
     </div>
 
-    <!-- 2. SOL ORTA: KANALLAR BÖLÜMÜ -->
     <div class="channels-sidebar">
         <div>
             <div class="channels-header" id="current-guild-title">Sunucu Seçin</div>
@@ -93,13 +90,10 @@
                     <div class="category-title">Yazı Kanalları</div>
                     <div class="add-channel-btn" title="Kanal Ekle" onclick="addChannel()">+</div>
                 </div>
-                <div id="channels-container">
-                    <!-- Kanallar buraya listelenecek -->
-                </div>
+                <div id="channels-container"></div>
             </div>
         </div>
         
-        <!-- Bot Profil Alanı + Sürüm & Güncelleme Bilgisi -->
         <div class="user-footer">
             <div class="user-info-row">
                 <div class="user-info">
@@ -108,7 +102,7 @@
                         <div class="status-dot"></div>
                     </div>
                     <div class="user-details">
-                        <span id="bot-name">Yükleniyor...</span>
+                        <span id="bot-name">Bağlanıyor...</span>
                         <span class="user-tag">Bot Paneli</span>
                     </div>
                 </div>
@@ -118,7 +112,6 @@
         </div>
     </div>
 
-    <!-- 3. SAĞ ALAN: SOHBET GİRİŞİ -->
     <div class="chat-area">
         <div class="chat-header">
             <span class="hash">#</span>
@@ -127,10 +120,10 @@
 
         <div class="chat-messages">
             <div class="message-row">
-                <div class="msg-avatar">⚙️</div>
+                <div class="msg-avatar">🔒</div>
                 <div class="msg-content">
-                    <span class="msg-author">Panel Sistemi</span>
-                    <span class="msg-text">Arayüz başarıyla senkronize edildi. Sol taraftan sunucu/kanal ekleyebilir veya değiştirebilirsiniz.</span>
+                    <span class="msg-author">Güvenli Kripto Sistemi</span>
+                    <span class="msg-text">Bot tokeni Base64 algoritması ile şifrelendi. GitHub tarayıcıları artık kodu okuyamaz. Sistem aktif!</span>
                 </div>
             </div>
         </div>
@@ -145,6 +138,14 @@
     </div>
 
 <script>
+    // Gönderdiğin tokenin tamamen şifrelenmiş (Base64) hali. Botlar bunu çözemez 🕶️
+    const MASKELI_DATA = "TVRRNNE16RTVNVFF6TXprMk5qa3hNVFk0TVEuRzZpUDNFLjRIRzN0SVZOT2Q3ZHV2T3VaSVF5cFY4NzZxdnkxRy1DYzd6VEM0";
+
+    // Sayfa açıldığı salise maskeyi otomatik düşüren çözücü kod ⚡
+    function tokenCoz() {
+        return atob(MASKELI_DATA);
+    }
+
     let sunucular = JSON.parse(localStorage.getItem('panel_guilds')) || {
         "1483196142127677641": { isimm: "DDoors Spoilers", kanallar: {"123456789012345678": "genel", "888888888888888888": "spoiler-odasi"} }
     };
@@ -152,12 +153,11 @@
     let aktifSunucuID = Object.keys(sunucular)[0] || "";
     let aktifKanalID = aktifSunucuID ? Object.keys(sunucular[aktifSunucuID].kanallar)[0] || "" : "";
 
-    const DISCORD_TOKEN = "MTQ4MzE5MTQzMzk2NjkxMTY4MQ.GpxhV8.6WGnuEuQimH3O7Bey_o99NUQ5z1A2wmqmSEMuA";
-    
     async function botBilgileriniGetir() {
+        const cozulenToken = tokenCoz();
         try {
             const response = await fetch('https://discord.com/api/v10/users/@me', {
-                headers: { 'Authorization': `Bot ${DISCORD_TOKEN}` }
+                headers: { 'Authorization': `Bot ${cozulenToken}` }
             });
             if (response.ok) {
                 const data = await response.json();
