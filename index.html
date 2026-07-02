@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord</title>
+    <title>Discord Bot Kontrol Paneli</title>
     <style>
         :root {
             --bg-darkest: #1e1f22;
@@ -17,41 +17,50 @@
             --green: #23a55a;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-darkest); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; select: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-darkest); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; user-select: none; }
         
-        /* En Sol: Sunucu İkonları Listesi */
-        .guilds-sidebar { width: 72px; background-color: var(--bg-darkest); display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 8px; border-right: 1px solid rgba(0,0,0,0.2); }
+        /* En Sol: Sunucu Listesi */
+        .guilds-sidebar { width: 72px; background-color: var(--bg-darkest); display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 8px; border-right: 1px solid rgba(0,0,0,0.2); overflow-y: auto; }
         .guild-icon { width: 48px; height: 48px; background-color: var(--bg-main); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: white; cursor: pointer; transition: border-radius 0.2s, background-color: 0.2s; font-size: 14px; position: relative; }
         .guild-icon:hover, .guild-icon.active { border-radius: 16px; background-color: var(--blurple); }
-        .guild-icon::before { content: ''; position: absolute; left: -12px; width: 8px; height: 20px; background-color: white; border-radius: 0 4px 4px 0; display: none; }
-        .guild-icon.active::before { display: block; height: 40px; left: -12px; }
+        .guild-icon.active::before { content: ''; position: absolute; left: -12px; width: 8px; height: 40px; background-color: white; border-radius: 0 4px 4px 0; }
+        .add-guild-btn { background-color: #23a55a !important; color: white !important; font-size: 22px !important; }
+        .add-guild-btn:hover { background-color: #1a7f43 !important; border-radius: 16px !important; }
 
-        /* Sol Orta: Kanallar ve Kişiler */
+        /* Sol Orta: Kanallar Bölümü */
         .channels-sidebar { width: 240px; background-color: var(--bg-sidebar); display: flex; flex-direction: column; justify-content: space-between; }
-        .channels-header { height: 48px; border-bottom: 1px solid rgba(0,0,0,0.2); display: flex; align-items: center; padding: 0 16px; font-weight: bold; font-size: 15px; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .channels-header { height: 48px; border-bottom: 1px solid rgba(0,0,0,0.2); display: flex; align-items: center; padding: 0 16px; font-weight: bold; font-size: 15px; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.2); justify-content: space-between; }
         .channels-list { padding: 8px; flex-grow: 1; overflow-y: auto; }
-        .category-title { font-size: 12px; font-weight: bold; color: var(--text-muted); padding: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .category-container { display: flex; justify-content: space-between; align-items: center; padding-right: 8px; margin-top: 10px; }
+        .category-title { font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .add-channel-btn { color: var(--text-muted); cursor: pointer; font-size: 16px; font-weight: bold; }
+        .add-channel-btn:hover { color: white; }
+        
         .channel-item { display: flex; align-items: center; padding: 6px 8px; border-radius: 4px; margin-bottom: 2px; cursor: pointer; color: var(--text-muted); font-size: 14px; }
         .channel-item:hover { background-color: rgba(255,255,255,0.05); color: var(--text-main); }
         .channel-item.active { background-color: rgba(255,255,255,0.1); color: white; }
         .channel-item span { margin-right: 6px; font-size: 16px; font-weight: bold; }
 
-        /* Sol Alt: Bot Profil Alanı */
-        .user-footer { height: 52px; background-color: #232428; display: flex; align-items: center; padding: 0 8px; justify-content: space-between; }
+        /* Sol Alt: Sürüm Bilgili Profil Alanı */
+        .user-footer { height: 64px; background-color: #232428; display: flex; flex-direction: column; padding: 8px; justify-content: center; border-top: 1px solid rgba(0,0,0,0.1); }
+        .user-info-row { display: flex; align-items: center; gap: 8px; justify-content: space-between; width: 100%; }
         .user-info { display: flex; align-items: center; gap: 8px; }
         .avatar-container { position: relative; width: 32px; height: 32px; }
-        .user-avatar { width: 32px; height: 32px; background-color: var(--blurple); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 12px; color: white; }
+        #bot-avatar { width: 32px; height: 32px; background-color: var(--blurple); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 11px; color: white; background-size: cover; }
         .status-dot { position: absolute; bottom: -2px; right: -2px; width: 10px; height: 10px; background-color: var(--green); border-radius: 50%; border: 2px solid #232428; }
         .user-details { display: flex; flex-direction: column; font-size: 13px; }
-        .username { font-weight: bold; color: white; line-height: 14px; }
+        #bot-name { font-weight: bold; color: white; line-height: 14px; }
         .user-tag { color: var(--text-muted); font-size: 11px; }
+        
+        /* Yenilenen Sürüm Etiketi */
+        .version-tag { background-color: #1e1f22; color: #23a55a; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; text-transform: uppercase; border: 1px solid rgba(35, 165, 90, 0.2); }
+        .update-counter { font-size: 10px; color: var(--text-muted); margin-top: 4px; padding-left: 2px; text-align: left; font-style: italic; }
 
-        /* Sağ Alan: Ana Sohbet Ekranı */
+        /* Sağ Alan: Sohbet Ekranı */
         .chat-area { flex-grow: 1; background-color: var(--bg-main); display: flex; flex-direction: column; }
         .chat-header { height: 48px; border-bottom: 1px solid rgba(0,0,0,0.2); display: flex; align-items: center; padding: 0 16px; font-weight: bold; font-size: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.2); gap: 8px; }
         .chat-header .hash { color: var(--text-muted); font-size: 20px; }
         
-        /* Mesaj Geçmişi Görünümü (Simüle Edilmiş) */
         .chat-messages { flex-grow: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; justify-content: flex-end; gap: 16px; }
         .message-row { display: flex; gap: 16px; }
         .msg-avatar { width: 40px; height: 40px; background-color: #4f545c; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; color: white; }
@@ -59,123 +68,199 @@
         .msg-author { font-weight: bold; font-size: 15px; color: white; margin-bottom: 4px; }
         .msg-text { font-size: 15px; color: var(--text-main); }
 
-        /* Mesaj Yazma Alanı (Gönderim Formu) */
         .chat-input-area { padding: 0 16px 24px 16px; background-color: var(--bg-main); }
         .input-wrapper { background-color: var(--bg-input); border-radius: 8px; display: flex; align-items: center; padding: 0 16px; height: 44px; }
         .input-wrapper input { background: none; border: none; color: var(--text-main); width: 100%; height: 100%; font-size: 15px; outline: none; }
         .input-wrapper button { background-color: var(--blurple); color: white; border: none; padding: 6px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         .input-wrapper button:hover { background-color: var(--blurple-hover); }
         
-        #status-log { font-size: 12px; color: var(--text-muted); margin-top: 5px; padding-left: 5px; }
+        #status-log { font-size: 11px; color: var(--text-muted); margin-top: 5px; padding-left: 5px; }
     </style>
 </head>
 <body>
 
     <!-- 1. EN SOL: SUNUCULAR -->
-    <div class="guilds-sidebar">
-        <div class="guild-icon active" title="Varsayılan Sunucu" onclick="selectGuild('1483196142127677641', 'DDoors Spoilers')">DS</div>
-        <div class="guild-icon" title="Test Sunucusu" onclick="selectGuild('999999999999999999', 'Geliştirici Sunucusu')">GS</div>
+    <div class="guilds-sidebar" id="guilds-list">
+        <div class="guild-icon add-guild-btn" title="Sunucu Ekle" onclick="addGuild()">+</div>
     </div>
 
-    <!-- 2. SOL ORTA: KANALLAR VE BOT PROFİLİ -->
+    <!-- 2. SOL ORTA: KANALLAR BÖLÜMÜ -->
     <div class="channels-sidebar">
         <div>
-            <div class="channels-header" id="guild-name">DDoors Spoilers</div>
+            <div class="channels-header" id="current-guild-title">Sunucu Seçin</div>
             <div class="channels-list">
-                <div class="category-title">Yazı Kanalları</div>
-                <div class="channel-item active" onclick="selectChannel('123456789012345678', 'genel')"><span>#</span>genel</div>
-                <div class="channel-item" onclick="selectChannel('888888888888888888', 'spoiler-odasi')"><span>#</span>spoiler-odasi</div>
-                <div class="channel-item" onclick="selectChannel('777777777777777777', 'bot-komut')"><span>#</span>bot-komut</div>
+                <div class="category-container">
+                    <div class="category-title">Yazı Kanalları</div>
+                    <div class="add-channel-btn" title="Kanal Ekle" onclick="addChannel()">+</div>
+                </div>
+                <div id="channels-container">
+                    <!-- Kanallar buraya listelenecek -->
+                </div>
             </div>
         </div>
         
-        <!-- Bot Kimliği -->
+        <!-- Bot Profil Alanı + Sürüm & Güncelleme Bilgisi -->
         <div class="user-footer">
-            <div class="user-info">
-                <div class="avatar-container">
-                    <div class="user-avatar">BOT</div>
-                    <div class="status-dot"></div>
+            <div class="user-info-row">
+                <div class="user-info">
+                    <div class="avatar-container">
+                        <div id="bot-avatar">BOT</div>
+                        <div class="status-dot"></div>
+                    </div>
+                    <div class="user-details">
+                        <span id="bot-name">Yükleniyor...</span>
+                        <span class="user-tag">Bot Paneli</span>
+                    </div>
                 </div>
-                <div class="user-details">
-                    <span class="username">DoorsBot</span>
-                    <span class="user-tag">#0001</span>
-                </div>
+                <div class="version-tag">v1.4.0</div>
             </div>
+            <div class="update-counter">⚙️ 6. Güncelleme Aktif</div>
         </div>
     </div>
 
-    <!-- 3. SAĞ ALAN: SOHBET VE GÖNDERME PANELİ -->
+    <!-- 3. SAĞ ALAN: SOHBET GİRİŞİ -->
     <div class="chat-area">
         <div class="chat-header">
             <span class="hash">#</span>
-            <span id="current-channel-name">genel</span>
+            <span id="current-channel-title">kanal-secin</span>
         </div>
 
-        <!-- Sahte Geçmiş (Arayüz Tamamlansın Diye) -->
         <div class="chat-messages">
             <div class="message-row">
-                <div class="msg-avatar">U</div>
+                <div class="msg-avatar">⚙️</div>
                 <div class="msg-content">
-                    <span class="msg-author">Sistem</span>
-                    <span class="msg-text">Panel bağlantısı kuruldu. Mesajınızı aşağıdaki kutudan gönderebilirsiniz.</span>
+                    <span class="msg-author">Panel Sistemi</span>
+                    <span class="msg-text">Arayüz başarıyla senkronize edildi. Sol taraftan sunucu/kanal ekleyebilir veya değiştirebilirsiniz.</span>
                 </div>
             </div>
         </div>
 
-        <!-- Giriş Kutusu -->
         <div class="chat-input-area">
             <div class="input-wrapper">
-                <input type="text" id="mesajKutusu" placeholder="#genel kanalına mesaj gönder...">
+                <input type="text" id="mesajKutusu" placeholder="Önce bir kanal seçin..." disabled>
                 <button onclick="discordaUcur()">Gönder</button>
             </div>
-            <div id="status-log">Seçili Sunucu: <b id="lbl-sunucu">1483196142127677641</b> | Kanal: <b id="lbl-kanal">123456789012345678</b></div>
+            <div id="status-log">Seçili Sunucu ID: <b id="lbl-sunucu">-</b> | Kanal ID: <b id="lbl-kanal">-</b></div>
         </div>
     </div>
 
 <script>
-    // Aktif durumdaki ID'leri tutan değişkenler
-    let aktifSunucuID = "1483196142127677641";
-    let aktifKanalID = "123456789012345678";
+    let sunucular = JSON.parse(localStorage.getItem('panel_guilds')) || {
+        "1483196142127677641": { isimm: "DDoors Spoilers", kanallar: {"123456789012345678": "genel", "888888888888888888": "spoiler-odasi"} }
+    };
 
-    // Sayfa açıldığında hafızadaki en son seçilen kanalı getir
-    window.addEventListener('DOMContentLoaded', () => {
-        const localKanal = localStorage.getItem('lastKanalID');
-        if (localKanal) {
-            aktifKanalID = localKanal;
-            document.getElementById('lbl-kanal').innerText = localKanal;
+    let aktifSunucuID = Object.keys(sunucular)[0] || "";
+    let aktifKanalID = aktifSunucuID ? Object.keys(sunucular[aktifSunucuID].kanallar)[0] || "" : "";
+
+    const DISCORD_TOKEN = "MTQ4MzE5MTQzMzk2NjkxMTY4MQ.GpxhV8.6WGnuEuQimH3O7Bey_o99NUQ5z1A2wmqmSEMuA";
+    
+    async function botBilgileriniGetir() {
+        try {
+            const response = await fetch('https://discord.com/api/v10/users/@me', {
+                headers: { 'Authorization': `Bot ${DISCORD_TOKEN}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('bot-name').innerText = data.username;
+                if (data.avatar) {
+                    document.getElementById('bot-avatar').style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png)`;
+                    document.getElementById('bot-avatar').innerText = "";
+                } else {
+                    document.getElementById('bot-avatar').innerText = data.username.substring(0,2).toUpperCase();
+                }
+            }
+        } catch (err) {
+            document.getElementById('bot-name').innerText = "DoorsBot";
         }
-    });
+    }
 
-    function selectGuild(id, name) {
-        aktifSunucuID = id;
-        document.getElementById('guild-name').innerText = name;
-        document.getElementById('lbl-sunucu').innerText = id;
+    function arayuzuGuncelle() {
+        const gList = document.getElementById('guilds-list');
+        const addBtn = gList.querySelector('.add-guild-btn');
+        gList.innerHTML = "";
         
-        // Görsel efekt aktifleştirme
-        document.querySelectorAll('.guild-icon').forEach(el => el.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        Object.keys(sunucular).forEach(id => {
+            const icon = document.createElement('div');
+            icon.className = `guild-icon ${id === aktifSunucuID ? 'active' : ''}`;
+            icon.innerText = sunucular[id].isimm.substring(0,2).toUpperCase();
+            icon.title = sunucular[id].isimm;
+            icon.onclick = () => selectGuild(id);
+            gList.appendChild(icon);
+        });
+        gList.appendChild(addBtn);
+
+        const cContainer = document.getElementById('channels-container');
+        cContainer.innerHTML = "";
+        
+        if (aktifSunucuID && sunucular[aktifSunucuID]) {
+            document.getElementById('current-guild-title').innerText = sunucular[aktifSunucuID].isimm;
+            document.getElementById('lbl-sunucu').innerText = aktifSunucuID;
+            
+            const kanallar = sunucular[aktifSunucuID].kanallar;
+            Object.keys(kanallar).forEach(cId => {
+                const cItem = document.createElement('div');
+                cItem.className = `channel-item ${cId === aktifKanalID ? 'active' : ''}`;
+                cItem.innerHTML = `<span>#</span>${kanallar[cId]}`;
+                cItem.onclick = () => selectChannel(cId, kanallar[cId]);
+                cContainer.appendChild(cItem);
+            });
+        }
+
+        if (aktifKanalID && sunucular[aktifSunucuID]?.kanallar[aktifKanalID]) {
+            document.getElementById('current-channel-title').innerText = sunucular[aktifSunucuID].kanallar[aktifKanalID];
+            document.getElementById('lbl-kanal').innerText = aktifKanalID;
+            document.getElementById('mesajKutusu').placeholder = `#${sunucular[aktifSunucuID].kanallar[aktifKanalID]} kanalına mesaj gönder...`;
+            document.getElementById('mesajKutusu').disabled = false;
+        } else {
+            document.getElementById('current-channel-title').innerText = "kanal-secin";
+            document.getElementById('lbl-kanal').innerText = "-";
+            document.getElementById('mesajKutusu').placeholder = "Önce bir kanal seçin...";
+            document.getElementById('mesajKutusu').disabled = true;
+        }
+        
+        localStorage.setItem('panel_guilds', JSON.stringify(sunucular));
+    }
+
+    function selectGuild(id) {
+        aktifSunucuID = id;
+        aktifKanalID = Object.keys(sunucular[id]?.kanallar || {})[0] || "";
+        arayuzuGuncelle();
     }
 
     function selectChannel(id, name) {
         aktifKanalID = id;
-        document.getElementById('current-channel-name').innerText = name;
-        document.getElementById('lbl-kanal').innerText = id;
-        document.getElementById('mesajKutusu').placeholder = `#${name} kanalına mesaj gönder...`;
-        localStorage.setItem('lastKanalID', id);
+        arayuzuGuncelle();
+    }
 
-        // Görsel efekt aktifleştirme
-        document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+    function addGuild() {
+        const isim = prompt("Eklenecek Sunucu Adı:");
+        const id = prompt("Eklenecek Sunucu ID:");
+        if (isim && id) {
+            sunucular[id.trim()] = { isimm: isim.trim(), kanallar: {} };
+            aktifSunucuID = id.trim();
+            aktifKanalID = "";
+            arayuzuGuncelle();
+        }
+    }
+
+    function addChannel() {
+        if (!aktifSunucuID) return alert("Önce bir sunucu seçmelisiniz!");
+        const isim = prompt("Eklenecek Kanal Adı:");
+        const id = prompt("Eklenecek Kanal ID:");
+        if (isim && id) {
+            const formatliIsim = isim.trim().toLowerCase().replace(/\s+/g, '-');
+            sunucular[aktifSunucuID].kanallar[id.trim()] = formatliIsim;
+            aktifKanalID = id.trim();
+            arayuzuGuncelle();
+        }
     }
 
     async function discordaUcur() {
         const mesaj = document.getElementById('mesajKutusu').value.trim();
         const log = document.getElementById('status-log');
+        if (!mesaj || !aktifKanalID) return;
 
-        if (!mesaj) return;
-
-        log.innerText = "Mesaj Firebase'e iletiliyor... ⏳";
-
+        log.innerText = "Mesaj gönderiliyor... ⏳";
         const fbURL = "https://emirdiscordbotyonetim20266-default-rtdb.firebaseio.com/mesajlar.json";
 
         try {
@@ -189,22 +274,21 @@
                     zaman: Date.now()
                 })
             });
-
             if (res.ok) {
-                log.innerHTML = `✅ Mesaj başarıyla sıraya eklendi! Sunucu: <b>${aktifSunucuID}</b>`;
-                document.getElementById('mesajKutusu').value = ""; // Kutuyu temizle
-            } else {
-                throw new Error();
-            }
+                log.innerHTML = `✅ Mesaj sıraya alındı! Kanal: <b>#${sunucular[aktifSunucuID].kanallar[aktifKanalID]}</b>`;
+                document.getElementById('mesajKutusu').value = "";
+            } else { throw new Error(); }
         } catch (e) {
-            log.innerHTML = "<span style='color:#f04747;'>❌ Firebase bağlantı hatası oluştu!</span>";
+            log.innerHTML = "<span style='color:#f04747;'>❌ Mesaj Firebase'e yazdırılamadı!</span>";
         }
     }
 
-    // Enter tuşuna basınca da göndersin
     document.getElementById('mesajKutusu').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') discordaUcur();
     });
+
+    botBilgileriniGetir();
+    arayuzuGuncelle();
 </script>
 
 </body>
