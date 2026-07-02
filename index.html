@@ -108,7 +108,6 @@
                 </div>
                 <div class="version-tag">v1.4.0</div>
             </div>
-            <!-- ARTIK BURADA 7. GÜNCELLEME YAZIYOR! ⚙️ -->
             <div class="update-counter">⚙️ 7. Güncelleme Aktif</div>
         </div>
     </div>
@@ -120,6 +119,7 @@
         </div>
 
         <div class="chat-messages">
+            <!-- Normal Eski Görünüm Mesajı 💬 -->
             <div class="message-row">
                 <div class="msg-avatar">🔒</div>
                 <div class="msg-content">
@@ -134,12 +134,13 @@
                 <input type="text" id="mesajKutusu" placeholder="Önce bir kanal seçin..." disabled>
                 <button onclick="discordaUcur()">Gönder</button>
             </div>
+            <!-- Orijinal Eski Alt Log Bilgileri 📊 -->
             <div id="status-log">Seçili Sunucu ID: <b id="lbl-sunucu">-</b> | Kanal ID: <b id="lbl-kanal">-</b></div>
         </div>
     </div>
 
 <script>
-    // Gönderdiğin tokenin Base64 hali 🕶️
+    // Token sadece burada Base64 olarak saklanıyor 🕶️
     const MASKELI_DATA = "TVRRNNE16RTVNVFF6TXprMk5qa3hNVFk0TVEuRzZpUDNFLjRIRzN0SVZOT2Q3ZHV2T3VaSVF5cFY4NzZxdnkxRy1DYzd6VEM0";
 
     function tokenCoz() {
