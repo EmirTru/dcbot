@@ -37,8 +37,8 @@
 
         status.innerText = "Gönderiliyor... ⏳";
 
-        // BURAYA KENDİ FIREBASE REALTIME DATABASE LINKINI YAPIŞTIR (Sonuna /mesajlar.json eklemeyi unutma)
-        const firebaseURL = "https://VERITABANI_URL_ADRESIN/mesajlar.json";
+        // Senin sağladığın Firebase URL'i entegre edildi:
+        const firebaseURL = "https://emirdiscordbotyonetim20266-default-rtdb.firebaseio.com/mesajlar.json";
 
         try {
             await fetch(firebaseURL, {
@@ -46,51 +46,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ kanalID, mesaj, tarih: Date.now() })
             });
-            status.innerText = "Mesaj Firebase'e uçtu! Bot birazdan sunucuya atar. ✅";
+            status.innerText = "Mesaj iletildi! Bot açık ise sunucuya gönderilecek. ✅";
+            document.getElementById('mesaj').value = ""; // Kutuyu temizle
         } catch (err) {
-            status.innerText = "Firebase hatası! ❌";
-        }
-    }
-</script>
-
-</body>
-</html></div>
-
-<script>
-    async function botaGonder() {
-        const kanalID = document.getElementById('kanalID').value;
-        const mesaj = document.getElementById('mesaj').value;
-        const statusDiv = document.getElementById('status');
-
-        if(!kanalID || !mesaj) {
-            statusDiv.style.color = "#eded38";
-            statusDiv.innerText = "Lütfen tüm alanları doldurun! ⚠️";
-            return;
-        }
-
-        statusDiv.style.color = "#b9bbbe";
-        statusDiv.innerText = "Gönderiliyor... ⏳";
-
-        try {
-            // Botun kendi bilgisayarında (localhost) açık olduğu için istek buraya gidiyor
-            const response = await fetch('http://localhost:3000/api/mesaj-gonder', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ kanalID, mesaj })
-            });
-
-            const data = await response.json();
-            
-            if(response.ok) {
-                statusDiv.style.color = "#43b581";
-                statusDiv.innerText = data.mesaj;
-            } else {
-                statusDiv.style.color = "#f04747";
-                statusDiv.innerText = "Hata: " + data.error;
-            }
-        } catch (err) {
-            statusDiv.style.color = "#f04747";
-            statusDiv.innerText = "Sunucuya bağlanılamadı! (VS Code'da bot açık mı?) ❌";
+            status.innerText = "Firebase bağlantı hatası! ❌";
         }
     }
 </script>
